@@ -23,7 +23,7 @@ Rules: real URLs only, sort by soonest deadline first, max 6 results, daysLeft m
         'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'compound-beta',
+        model: 'llama-3.3-70b-versatile',
         messages: [
           { role: 'system', content: systemPrompt },
           ...messages
