@@ -9,7 +9,7 @@ This is a personal tool built by Jannah Abdelhay. It uses an AI agent to search 
 ## The Two Pages
 
 **About (index.html)**
-This is the homepage. It gives a short introduction to Jannah, her background in computer science and security, her experience, awards, and contact details. The LinkedIn profile and email address are both linked directly.
+This is the homepage. It gives a short introduction to  me (Jannah), my background in computer science and security, my experience, awards, and contact details. The LinkedIn profile and email address are both linked directly.
 
 **Opportunity Finder (finder.html)**
 This is the main tool. You describe what you are looking for in plain language, and the AI searches the web and returns a ranked list of real, currently open opportunities.
