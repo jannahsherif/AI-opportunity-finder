@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jannah Abdelhay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Syne:wght@400;500;700;800&family=DM+Mono&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --surface: #111;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.15);
+      --text: #f0eff4;
+      --muted: #666;
+      --accent: #c8b97a;
+      --accent2: #8fa8c8;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-sans: 'Syne', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+    }
+
+    /* noise grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,8,8,0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .hero-accent-line {
+      position: absolute;
+      top: 30%;
+      left: -100px;
+      width: 600px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.3;
+      transform: rotate(-8deg);
+    }
+
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(64px, 10vw, 130px);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      max-width: 520px;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 48px;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .btn-primary {
+      padding: 13px 28px;
+      background: var(--accent);
+      color: #080808;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+
+    .btn-ghost {
+      padding: 12px 28px;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+      display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--text); }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 32px;
+      right: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      animation: fadeUp 0.8s 0.5s ease both;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--muted), transparent);
+      animation: scrollPulse 2s infinite;
+    }
+    @keyframes scrollPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+    /* SECTIONS */
+    section {
+      padding: 100px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 80px;
+      height: 1px;
+      background: var(--border2);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 32px;
+    }
+
+    /* ABOUT */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 15px;
+      line-height: 1.9;
+      color: rgba(240,239,244,0.75);
+      margin-bottom: 20px;
+    }
+
+    .about-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+
+    .stat-row {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .stat-row:last-child { border-bottom: none; }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* EXPERIENCE */
+    .exp-list { display: flex; flex-direction: column; gap: 0; }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 40px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeUp 0.6s ease both;
+    }
+    .exp-item:first-child { border-top: 1px solid var(--border); }
+
+    .exp-period {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      padding-top: 4px;
+    }
+
+    .exp-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .exp-company {
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+    }
+
+    .exp-desc {
+      font-size: 14px;
+      color: rgba(240,239,244,0.65);
+      line-height: 1.7;
+    }
+
+    /* SKILLS */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .skill-cell {
+      background: var(--bg);
+      padding: 24px;
+      transition: background 0.2s;
+    }
+    .skill-cell:hover { background: var(--surface); }
+
+    .skill-category {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .skill-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      border: 1px solid var(--border2);
+      color: rgba(240,239,244,0.7);
+    }
+
+    /* AWARDS */
+    .awards-list { display: flex; flex-direction: column; gap: 0; }
+
+    .award-item {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .award-item:first-child { border-top: 1px solid var(--border); }
+
+    .award-rank {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--accent);
+      min-width: 60px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .award-name { font-size: 15px; font-weight: 500; }
+    .award-date { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* LINKS */
+    .links-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 60px;
+      padding-top: 60px;
+      border-top: 1px solid var(--border);
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s, border-color 0.2s;
+      font-family: var(--font-mono);
+    }
+    .social-link:hover { color: var(--text); border-color: var(--text); }
+
+    /* FINDER SECTION */
+    .finder-banner {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      padding: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .finder-banner-text h2 {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+    .finder-banner-text p { font-size: 14px; color: var(--muted); max-width: 400px; line-height: 1.7; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .hero { padding: 0 20px 60px; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .exp-item { grid-template-columns: 1fr; gap: 8px; }
+      section { padding: 60px 20px; }
+      .finder-banner { padding: 32px 24px; }
+      footer { padding: 24px 20px; flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">J.A</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">About</a>
+      <a href="finder.html">Opportunity Finder</a>
+      <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank">LinkedIn ↗</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid-lines"></div>
+    <div class="hero-accent-line"></div>
+    <div class="hero-tag">Computer Science · CMU Qatar · Class of 2027</div>
+    <h1 class="hero-name">Jannah<br /><em>Abdelhay</em></h1>
+    <p class="hero-sub">
+      CS undergraduate at Carnegie Mellon University, concentrating in Security & Privacy.
+      I build secure systems, break things to understand them, and care deeply about how
+      software holds up in the real world.
+    </p>
+    <div class="hero-ctas">
+      <a href="finder.html" class="btn-primary">Opportunity Finder →</a>
+      <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" class="btn-ghost">LinkedIn ↗</a>
+      <a href="mailto:jabdelel@andrew.cmu.edu" class="btn-ghost">Email me</a>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+      scroll
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label">01 — About</div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a second-year CS student at CMU Qatar with a 3.78 GPA, focused on systems security,
+          browser internals, and secure backend development. I'm drawn to the hard problems —
+          how vulnerabilities actually work, how systems fail at scale, and how you build things
+          that don't.
+        </p>
+        <p>
+          I've interned at Microsoft (Apache TomEE / CI pipelines), built agentic AI workflows at UBS,
+          and led backend integrations at Sherkety. Outside of work, I mentor incoming CS freshmen
+          and compete in cybersecurity and mathematics championships.
+        </p>
+        <p>
+          I speak Arabic natively, English fluently, French (B1), and German (A2 from the Goethe Institute
+          in Freiburg). I'm a firm believer that the best engineers are also excellent communicators.
+        </p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-row">
+          <span class="stat-label">GPA (Spring 2026)</span>
+          <span class="stat-value">3.78</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Graduation</span>
+          <span class="stat-value">2027</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Languages spoken</span>
+          <span class="stat-value">4</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Competition placements</span>
+          <span class="stat-value">3×</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Location</span>
+          <span class="stat-value" style="font-size:18px;">Doha, QA</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="links-row">
+      <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" class="social-link">
+        ↗ LinkedIn
+      </a>
+      <a href="mailto:jabdelel@andrew.cmu.edu" class="social-link">
+        ↗ jabdelel@andrew.cmu.edu
+      </a>
+      <a href="tel:+97466716386" class="social-link">
+        ↗ (+974) 667-16386
+      </a>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" style="border-top: 1px solid rgba(255,255,255,0.05);">
+    <div class="section-label">02 — Experience</div>
+    <div class="exp-list">
+      <div class="exp-item">
+        <div class="exp-period">Sep 2025 – Nov 2025</div>
+        <div>
+          <div class="exp-title">Software Engineering Mentee</div>
+          <div class="exp-company">UBS Mentorship Program</div>
+          <div class="exp-desc">Designed and implemented a Low-Code / No-Code platform for building and orchestrating Generative AI and Agentic AI workflows, including a drag-and-drop interface for non-technical users.</div>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-period">May 2024 – Aug 2024</div>
+        <div>
+          <div class="exp-title">Software Engineering Intern</div>
+          <div class="exp-company">Microsoft — Apache TomEE Project</div>
+          <div class="exp-desc">Designed a nightly CI pipeline for Jakarta EE Starter with GitHub Actions. Implemented automated tests for Maven targets, Docker builds, and REST runtimes. Reduced build times by 15%.</div>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-period">Summer 2024</div>
+        <div>
+          <div class="exp-title">Python Backend Developer Intern</div>
+          <div class="exp-company">Sherkety</div>
+          <div class="exp-desc">Led integration of Meta AI into a core backend, improving data processing efficiency by 30%. Automated key workflows, reducing operational downtime by 50%.</div>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-period">Sep 2025 – May 2026</div>
+        <div>
+          <div class="exp-title">CS Mentor</div>
+          <div class="exp-company">Carnegie Mellon University Qatar</div>
+          <div class="exp-desc">Hired by the CS Academic Advisor to provide one-on-one mentorship to incoming freshmen, supporting their transition into the CS program.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" style="border-top: 1px solid rgba(255,255,255,0.05);">
+    <div class="section-label">03 — Skills</div>
+    <div class="skills-grid">
+      <div class="skill-cell">
+        <div class="skill-category">Languages</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">Java</span>
+          <span class="skill-tag">C</span>
+          <span class="skill-tag">C++</span>
+          <span class="skill-tag">HTML</span>
+        </div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-category">Tools & DevOps</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">GitHub Actions</span>
+          <span class="skill-tag">Maven</span>
+          <span class="skill-tag">Playwright</span>
+        </div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-category">Domains</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Browser Security</span>
+          <span class="skill-tag">CI/CD</span>
+          <span class="skill-tag">Agentic AI</span>
+          <span class="skill-tag">Cloud</span>
+        </div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-category">Soft Skills</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Technical Writing</span>
+          <span class="skill-tag">Public Speaking</span>
+          <span class="skill-tag">Leadership</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS -->
+  <section id="awards" style="border-top: 1px solid rgba(255,255,255,0.05);">
+    <div class="section-label">04 — Awards</div>
+    <div class="awards-list">
+      <div class="award-item">
+        <div class="award-rank">1st</div>
+        <div>
+          <div class="award-name">Qatar University Undergraduate Mathematics Championship</div>
+          <div class="award-date">November 2025</div>
+        </div>
+      </div>
+      <div class="award-item">
+        <div class="award-rank">3rd</div>
+        <div>
+          <div class="award-name">National Cybersecurity Competition (NCSA)</div>
+          <div class="award-date">November 2025</div>
+        </div>
+      </div>
+      <div class="award-item">
+        <div class="award-rank">10th</div>
+        <div>
+          <div class="award-name">Qatar Collegiate Programming Contest (QCPC)</div>
+          <div class="award-date">September 2025</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPPORTUNITY FINDER BANNER -->
+  <section style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 80px; padding-bottom: 100px;">
+    <div class="finder-banner">
+      <div class="finder-banner-text">
+        <h2>Find Opportunities</h2>
+        <p>Use the AI-powered finder to discover hackathons, competitions, and grants — sorted by deadline urgency with direct apply links.</p>
+      </div>
+      <a href="finder.html" class="btn-primary">Open Finder →</a>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Jannah Abdelhay</span>
+    <span>jabdelel@andrew.cmu.edu · Carnegie Mellon University Qatar</span>
+  </footer>
+
+</body>
+</html>
