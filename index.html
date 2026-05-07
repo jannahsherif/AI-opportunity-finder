@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jannah Abdelhay</title>
+  <title>Jannah Abdelhay | CS @ CMU-Q</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -41,22 +41,23 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 40px;
-      height: 56px;
+      height: 64px;
       border-bottom: 1px solid var(--border);
-      background: rgba(245,244,240,0.88);
-      backdrop-filter: blur(12px);
+      background: rgba(245,244,240,0.8);
+      backdrop-filter: blur(20px);
     }
 
     .nav-logo {
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--text);
       text-decoration: none;
+      letter-spacing: -1px;
     }
     .nav-logo span { color: var(--accent); }
 
-    .nav-links { display: flex; gap: 8px; }
+    .nav-links { display: flex; gap: 4px; }
     .nav-btn {
       font-size: 11px;
       font-weight: 600;
@@ -64,286 +65,189 @@
       text-transform: uppercase;
       color: var(--muted2);
       text-decoration: none;
-      padding: 6px 14px;
-      border-radius: 4px;
-      transition: all 0.15s;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.2s;
       font-family: var(--mono);
     }
-    .nav-btn:hover { background: rgba(0,0,0,0.05); color: var(--text); }
+    .nav-btn:hover { background: var(--accent-dim); color: var(--accent-dark); }
     .nav-btn.active { background: var(--text); color: var(--bg); }
 
     /* ── HERO ── */
     .hero {
-      min-height: 100vh;
+      min-height: 90vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 80px 40px 60px;
+      padding: 120px 40px 60px;
       position: relative;
-      overflow: hidden;
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
     }
 
-    /* dot-grid bg */
     .hero::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px);
-      background-size: 28px 28px;
+      background-image: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
       pointer-events: none;
-      z-index: 0;
-    }
-
-    /* green glow blob */
-    .hero-blob {
-      position: absolute;
-      top: 10%;
-      right: -10%;
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(0,200,83,0.12) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: blobDrift 8s ease-in-out infinite;
-    }
-    @keyframes blobDrift {
-      0%,100%{transform:translate(0,0) scale(1)}
-      50%{transform:translate(-30px,20px) scale(1.05)}
+      z-index: -1;
     }
 
     .hero-content { position: relative; z-index: 1; }
 
     .hero-eyebrow {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 12px;
       color: var(--accent-dark);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-      animation: fadeUp 0.6s ease both;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-    .hero-eyebrow::before {
-      content: '';
-      display: block;
-      width: 28px; height: 2px;
-      background: var(--accent);
-      border-radius: 2px;
+      gap: 12px;
     }
 
     .hero-name {
-      font-size: clamp(52px, 8vw, 100px);
+      font-size: clamp(48px, 10vw, 110px);
       font-weight: 800;
-      line-height: 1.0;
-      letter-spacing: -0.04em;
-      margin-bottom: 28px;
-      animation: fadeUp 0.6s 0.08s ease both;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      margin-bottom: 32px;
     }
-    .hero-name .accent { color: var(--accent-dark); }
+    .hero-name .accent { 
+        color: var(--accent-dark); 
+        background: linear-gradient(to bottom, var(--accent), var(--accent-dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 
-    .hero-desc {
-      max-width: 480px;
-      font-size: 16px;
-      line-height: 1.8;
-      color: var(--muted2);
+    /* Terminal Style Bio */
+    .terminal-bio {
+      background: #1a1a1a;
+      color: #00ff41;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.6;
+      max-width: 550px;
       margin-bottom: 40px;
-      animation: fadeUp 0.6s 0.15s ease both;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border-left: 4px solid var(--accent);
     }
+    .terminal-bio span { color: #fff; }
 
-    .hero-ctas {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      animation: fadeUp 0.6s 0.22s ease both;
-    }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
 
     .btn-primary {
-      padding: 12px 28px;
+      padding: 14px 32px;
       background: var(--text);
       color: var(--bg);
       font-family: var(--mono);
       font-size: 12px;
       font-weight: 700;
-      letter-spacing: 0.05em;
       text-transform: uppercase;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      border-radius: 8px;
       text-decoration: none;
-      transition: all 0.15s;
-      display: inline-block;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .btn-primary:hover {
       background: var(--accent-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,150,36,0.25);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,200,83,0.3);
     }
 
-    .btn-ghost {
-      padding: 11px 24px;
-      background: transparent;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      border: 1.5px solid var(--border2);
-      border-radius: 6px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.15s;
-      display: inline-block;
+    /* ── COLLABORATION SECTION ── */
+    .collab-section {
+        background: var(--text);
+        color: var(--bg);
+        padding: 80px 40px;
+        margin-top: 60px;
+        border-radius: 24px 24px 0 0;
     }
-    .btn-ghost:hover { border-color: var(--text); transform: translateY(-2px); }
-
-    /* ── FINDER BANNER ── */
-    .finder-section {
-      padding: 80px 40px 100px;
-      max-width: 900px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
+    .collab-container {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 40px;
     }
-
-    .finder-card {
-      background: var(--surface);
-      border: 1.5px solid var(--border2);
-      border-radius: 16px;
-      padding: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 32px;
-      flex-wrap: wrap;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.07);
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* animated corner accent */
-    .finder-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 200px; height: 3px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-    }
-
-    .finder-card-text h2 {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 10px;
-    }
-    .finder-card-text h2 span { color: var(--accent-dark); }
-
-    .finder-card-text p {
-      font-size: 14px;
-      color: var(--muted2);
-      line-height: 1.7;
-      max-width: 380px;
-    }
-
-    .finder-steps {
-      display: flex;
-      gap: 12px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    .step-pill {
-      font-family: var(--mono);
-      font-size: 10px;
-      padding: 5px 12px;
-      border-radius: 20px;
-      background: var(--accent-dim);
-      color: var(--accent-dark);
-      border: 1px solid rgba(0,200,83,0.2);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
+    .collab-text h3 { font-size: 32px; margin-bottom: 12px; }
+    .collab-text p { color: #aaa; max-width: 400px; line-height: 1.6; }
 
     /* ── FOOTER ── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 24px 40px;
+      background: #000;
+      padding: 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-      max-width: 900px;
-      margin: 0 auto;
-      width: 100%;
+      font-size: 12px;
+      color: #666;
     }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: none; }
-    }
-
-    @media (max-width: 600px) {
-      nav { padding: 0 16px; }
-      .hero { padding: 80px 20px 40px; }
-      .finder-section { padding: 40px 20px 60px; }
-      .finder-card { padding: 32px 24px; }
-      footer { padding: 20px; flex-direction: column; gap: 6px; text-align: center; }
+    @media (max-width: 768px) {
+      .collab-container { flex-direction: column; text-align: center; }
+      nav { padding: 0 20px; }
     }
   </style>
 </head>
 <body>
 
   <nav>
-    <a href="index.html" class="nav-logo">J<span>.</span>A</a>
+    <a href="index.html" class="nav-logo">JANNAH<span>.</span>ABDELHAY</a>
     <div class="nav-links">
-      <a href="index.html" class="nav-btn active">About</a>
+      <a href="index.html" class="nav-btn active">Home</a>
       <a href="finder.html" class="nav-btn">Finder</a>
-      <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" class="nav-btn">LinkedIn ↗</a>
+      <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" class="nav-btn">LinkedIn</a>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-blob"></div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">CS · CMU Qatar · Class of 2027</div>
-      <h1 class="hero-name">Jannah<br /><span class="accent">Abdelhay</span></h1>
-      <p class="hero-desc">
-        Computer Science undergraduate at Carnegie Mellon University Qatar,
-        concentrating in Security &amp; Privacy. I build secure systems and care
-        deeply about how software holds up in the real world.
-      </p>
-      <div class="hero-ctas">
-        <a href="finder.html" class="btn-primary">Open Opportunity Finder →</a>
-        <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" class="btn-ghost">LinkedIn ↗</a>
-      </div>
-    </div>
-  </div>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span>// CS @ Carnegie Mellon Qatar</span>
+          <span style="color: var(--muted)">•</span>
+          <span>Class of 2027</span>
+        </div>
+        <h1 class="hero-name">Build Secure.<br /><span class="accent">Code Fast.</span></h1>
+        
+        <div class="terminal-bio">
+          <span style="color: #888;">$ whoami</span><br>
+          Jannah Abdelhay. CS Undergraduate concentrating in Security & Privacy. 
+          Focusing on robust system architecture and real-world software resilience.
+          <br><br>
+          <span style="color: #888;">$ locate --opportunity</span><br>
+          Currently refining an AI-powered engine for competitive programming & hackathons.
+        </div>
 
-  <!-- FINDER BANNER -->
-  <div class="finder-section">
-    <div class="finder-card">
-      <div class="finder-card-text">
-        <h2>Find your next<br /><span>opportunity</span></h2>
-        <p>AI-powered search for hackathons, competitions, grants, and bounties — with real deadlines and direct apply links.</p>
-        <div class="finder-steps">
-          <div class="step-pill">🔍 Describe what you want</div>
-          <div class="step-pill">⚡ AI searches live</div>
-          <div class="step-pill">🔖 Save the best ones</div>
+        <div class="hero-ctas">
+          <a href="finder.html" class="btn-primary">Try Opportunity Finder</a>
+          <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" style="color: var(--text); text-decoration: none; font-family: var(--mono); font-size: 12px; display: flex; align-items: center;">Connect on LinkedIn ↗</a>
         </div>
       </div>
-      <a href="finder.html" class="btn-primary">Try the Finder →</a>
-    </div>
-  </div>
+    </section>
+
+    <section class="collab-section">
+        <div class="collab-container">
+            <div class="collab-text">
+                <h3>Calling all <span style="color: var(--accent)">Developers</span></h3>
+                <p>I'm looking for contributors interested in AI, Security, or building tools for the student developer community. Let's build something that matters.</p>
+            </div>
+            <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" class="btn-primary" style="background: var(--accent); color: #000;">Let's Talk on LinkedIn</a>
+        </div>
+    </section>
+  </main>
 
   <footer>
-    <span>© 2026 Jannah Abdelhay</span>
-    <span>CMU Qatar</span>
+    <div>© 2026 JANNAH ABDELHAY / CMU-Q</div>
+    <div style="display: flex; gap: 20px;">
+        <span>SECURITY_LEVEL: HIGH</span>
+        <span>STATUS: ACTIVE</span>
+    </div>
   </footer>
 
 </body>
