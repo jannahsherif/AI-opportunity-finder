@@ -1,69 +1,149 @@
-async function send() {
-  const input = document.getElementById('user-input');
-  const query = input.value.trim();
-  if (!query || loading) return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Opportunity Finder | Jannah Abdelhay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Outfit:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f4f0; --surface: #ffffff; --text: #0f0f0f;
+      --accent: #00c853; --accent-dark: #009624;
+      --border: rgba(0,0,0,0.1);
+    }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+    
+    /* Nav */
+    nav { padding: 20px 40px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); background: #fff; }
+    .nav-logo { font-family: 'Space Mono'; font-weight: bold; text-decoration: none; color: #000; }
 
-  // UI State: Start Loading
-  loading = true;
-  document.getElementById('status-dot').className = 'sdot loading';
-  document.getElementById('status-text').innerText = 'searching...';
-  document.getElementById('empty').style.display = 'none';
-  
-  // Add User Message to UI
-  const chat = document.getElementById('chat');
-  chat.innerHTML += `<div class="msg-user">${query}</div>`;
-  input.value = '';
+    /* Chat Area */
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    #chat { 
+      height: 400px; overflow-y: auto; background: #fff; 
+      border: 1px solid var(--border); border-radius: 12px; 
+      padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;
+    }
+    
+    /* Chat Bubbles */
+    .msg-user { align-self: flex-end; background: var(--text); color: #fff; padding: 10px 16px; border-radius: 15px 15px 0 15px; font-size: 14px; max-width: 80%; }
+    .msg-ai { align-self: flex-start; background: var(--border); color: var(--text); padding: 10px 16px; border-radius: 15px 15px 15px 0; font-size: 14px; max-width: 80%; }
 
-  try {
-    const res = await fetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [{ role: 'user', content: query }],
-        filters: filters,
-        deadline: deadline
-      })
-    });
+    /* Input */
+    .input-box { display: flex; gap: 10px; }
+    input { flex: 1; padding: 15px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Outfit'; }
+    button { padding: 0 25px; background: var(--text); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    button:disabled { opacity: 0.5; }
 
-    const data = await res.json();
+    /* Results */
+    #results-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+    .result-card { background: #fff; padding: 20px; border-radius: 10px; border: 1px solid var(--border); position: relative; }
+    .result-card.red { border-top: 4px solid #ff4444; }
+    .result-card.amber { border-top: 4px solid #ffbb33; }
+    .result-card.green { border-top: 4px solid #00c851; }
+    .card-title { font-weight: bold; margin-bottom: 5px; }
+    .card-desc { font-size: 13px; color: #666; margin-bottom: 10px; }
+    .apply-link { color: var(--accent-dark); text-decoration: none; font-weight: bold; font-size: 13px; }
+    
+    .status-area { font-size: 12px; font-family: 'Space Mono'; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .sdot.loading { color: var(--accent); animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
 
-    // 1. Add AI Response text
-    chat.innerHTML += `<div class="msg-ai">${data.message}</div>`;
+  <nav>
+    <a href="index.html" class="nav-logo">J<span>.</span>A</a>
+    <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" style="text-decoration:none; color:#666; font-size:12px;">LinkedIn ↗</a>
+  </nav>
 
-    // 2. Clear and Show Results
-    const list = document.getElementById('results-list');
-    list.innerHTML = '';
-    document.getElementById('results-panel').style.display = 'flex';
-    document.getElementById('results-count').innerText = `${data.results.length} found`;
+  <div class="container">
+    <div class="status-area">
+        <span id="status-dot" class="sdot">●</span>
+        <span id="status-text">SYSTEM READY</span>
+    </div>
 
-    data.results.forEach(item => {
-      const card = document.createElement('div');
-      // Urgency logic
-      const days = parseInt(item.daysLeft);
-      const colorClass = days < 10 ? 'red' : days < 30 ? 'amber' : 'green';
-      
-      card.className = `result-card ${colorClass}`;
-      card.innerHTML = `
-        <div class="card-body">
-          <div class="card-title">${item.title}</div>
-          <div class="card-desc">${item.description}</div>
-          <div class="card-footer">
-            <span class="deadline-badge badge-${colorClass}">${item.deadline}</span>
-            ${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="apply-link">Apply ↗</a>
-            <button class="bookmark-btn" onclick="saveItem('${btoa(item.title)}')">🔖</button>
-          </div>
-        </div>
-      `;
-      list.innerHTML += card.outerHTML;
-    });
+    <div id="chat">
+        <div class="msg-ai">Hello! What kind of opportunities are we looking for today?</div>
+    </div>
 
-    chat.scrollTop = chat.scrollHeight;
-  } catch (err) {
-    chat.innerHTML += `<div class="msg-ai" style="color:red">Error: Could not connect to the finder engine.</div>`;
-  } finally {
-    loading = false;
-    document.getElementById('status-dot').className = 'sdot';
-    document.getElementById('status-text').innerText = 'ready';
-  }
-}
+    <div id="empty" style="text-align:center; color:#999; margin-bottom:20px;">No searches yet.</div>
+
+    <div class="input-box">
+        <input type="text" id="user-input" placeholder="e.g. Cybersecurity hackathons for summer 2026...">
+        <button id="send-btn" onclick="send()">FIND</button>
+    </div>
+
+    <div id="results-panel" style="display:none; margin-top: 40px;">
+        <h3 id="results-count">0 Opportunities Found</h3>
+        <div id="results-list"></div>
+    </div>
+  </div>
+
+  <script>
+    let loading = false;
+    // Set default filters so the code doesn't break
+    let filters = { ai: true, security: true }; 
+    let deadline = "within 1 month";
+
+    async function send() {
+      const input = document.getElementById('user-input');
+      const query = input.value.trim();
+      if (!query || loading) return;
+
+      loading = true;
+      document.getElementById('status-dot').className = 'sdot loading';
+      document.getElementById('status-text').innerText = 'SEARCHING NETWORK...';
+      document.getElementById('empty').style.display = 'none';
+
+      const chat = document.getElementById('chat');
+      chat.innerHTML += `<div class="msg-user">${query}</div>`;
+      input.value = '';
+
+      try {
+        const res = await fetch('/api/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [{ role: 'user', content: query }],
+            filters: filters,
+            deadline: deadline
+          })
+        });
+
+        const data = await res.json();
+        chat.innerHTML += `<div class="msg-ai">${data.message || "Results retrieved."}</div>`;
+
+        const list = document.getElementById('results-list');
+        list.innerHTML = '';
+        document.getElementById('results-panel').style.display = 'block';
+        document.getElementById('results-count').innerText = `${data.results?.length || 0} Opportunities Found`;
+
+        if (data.results) {
+            data.results.forEach(item => {
+                const days = parseInt(item.daysLeft) || 30;
+                const colorClass = days < 10 ? 'red' : days < 30 ? 'amber' : 'green';
+                const card = document.createElement('div');
+                card.className = `result-card ${colorClass}`;
+                card.innerHTML = `
+                    <div class="card-title">${item.title}</div>
+                    <div class="card-desc">${item.description}</div>
+                    <div style="font-size:11px; margin-bottom:10px;">${item.deadline}</div>
+                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="apply-link">Apply ↗</a>
+                `;
+                list.appendChild(card);
+            });
+        }
+        chat.scrollTop = chat.scrollHeight;
+
+      } catch (err) {
+        chat.innerHTML += `<div class="msg-ai" style="color:red">ERROR: Connection to engine failed.</div>`;
+      } finally {
+        loading = false;
+        document.getElementById('status-dot').className = 'sdot';
+        document.getElementById('status-text').innerText = 'SYSTEM READY';
+      }
+    }
+  </script>
+</body>
+</html>
