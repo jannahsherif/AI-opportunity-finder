@@ -1,169 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Opportunity Finder | Jannah</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Outfit:wght@400;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #f5f4f0; --text: #0f0f0f; --accent: #00c853; --border: rgba(0,0,0,0.1);
-    }
-    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-    .nav { max-width: 900px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
-    
-    /* Disclaimer Bar */
-    .ai-warning { 
-        background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; 
-        font-size: 12px; text-align: center; margin-bottom: 20px; border: 1px solid #ffeeba;
-    }
+    <meta charset="UTF-8">
+    <title>Opportunity Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background: #f5f4f0; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        
+        /* THE CHAT BOX */
+        #chat {
+            background: white;
+            height: 450px;
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
 
-    #chat { 
-      max-width: 900px; height: 300px; margin: 0 auto 20px; background: #fff; 
-      border: 1px solid var(--border); border-radius: 12px; padding: 20px; 
-      overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-    }
-    .msg-user { align-self: flex-end; background: var(--text); color: #fff; padding: 8px 14px; border-radius: 12px 12px 0 12px; font-size: 14px; }
-    .msg-ai { align-self: flex-start; background: #eee; padding: 8px 14px; border-radius: 12px 12px 12px 0; font-size: 14px; }
+        /* User Message (Right) */
+        .msg-user {
+            align-self: flex-end;
+            background: #000;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 18px 18px 2px 18px;
+            max-width: 70%;
+            font-size: 14px;
+        }
 
-    .input-container { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; }
-    input { flex: 1; padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
-    button { padding: 0 25px; background: var(--text); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        /* AI Message (Left) */
+        .msg-ai {
+            align-self: flex-start;
+            background: #f0f0f0;
+            color: #333;
+            padding: 10px 16px;
+            border-radius: 18px 18px 18px 2px;
+            max-width: 70%;
+            font-size: 14px;
+            border: 1px solid #e0e0e0;
+        }
 
-    /* Results */
-    #pinned-section { max-width: 900px; margin: 30px auto; display: none; }
-    #results-panel { max-width: 900px; margin: 30px auto; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
-    
-    .result-card { background: #fff; padding: 20px; border-radius: 10px; border: 1px solid var(--border); transition: transform 0.2s; }
-    .result-card:hover { transform: translateY(-3px); }
-    .result-card.red { border-top: 4px solid #ff4444; }
-    .result-card.amber { border-top: 4px solid #ffbb33; }
-    .result-card.green { border-top: 4px solid #00c851; }
-    
-    .card-title { font-weight: bold; margin-bottom: 5px; }
-    .card-desc { font-size: 13px; color: #666; margin-bottom: 12px; }
-    .apply-link { color: var(--accent); text-decoration: none; font-weight: bold; font-size: 13px; }
-    .pin-btn { background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-  </style>
+        .input-group { display: flex; gap: 10px; }
+        input { flex: 1; padding: 15px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        button { background: #000; color: #fff; border: none; padding: 0 30px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .card { background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #eee; }
+    </style>
 </head>
 <body>
 
-  <div class="nav">
-    <a href="index.html" style="text-decoration:none; color:#000; font-weight:bold;">JANNAH<span>.</span>A</a>
-    <span style="font-family:'Space Mono'; font-size:12px;">OPPORTUNITY_FINDER_V2</span>
-  </div>
+<div class="container">
+    <h2 style="text-align:center;">Jannah.A | Finder</h2>
+    
+    <div id="chat">
+        <div class="msg-ai">Hello! I can help you find hackathons or competitions. What are you looking for?</div>
+    </div>
 
-  <div class="ai-warning">
-    ⚠️ <strong>Disclaimer:</strong> This content is AI-generated using live search. Please verify deadlines and official websites before applying.
-  </div>
+    <div class="input-group">
+        <input type="text" id="user-input" placeholder="Type your search and press Enter...">
+        <button id="find-btn">FIND</button>
+    </div>
 
-  <div id="chat">
-    <div class="msg-ai">Ready. Enter a search query (e.g., "Web3 Hackathons") and press Enter.</div>
-  </div>
+    <div id="results-panel" style="display:none;">
+        <h3 id="count-text">0 found</h3>
+        <div id="results-grid" class="results-grid"></div>
+    </div>
+</div>
 
-  <div class="input-container">
-    <input type="text" id="user-input" placeholder="What are you looking for?">
-    <button onclick="send()">FIND</button>
-  </div>
+<script>
+    const input = document.getElementById('user-input');
+    const chat = document.getElementById('chat');
+    const btn = document.getElementById('find-btn');
 
-  <div id="pinned-section">
-    <h3>Pinned for Later 📌</h3>
-    <div id="pinned-container" class="grid"></div>
-  </div>
-
-  <div id="results-panel" style="display:none;">
-    <h3 id="results-count">0 Opportunities Found</h3>
-    <div id="results-list" class="grid"></div>
-  </div>
-
-  <script>
-    let loading = false;
-    let pinnedJobs = JSON.parse(localStorage.getItem('pinnedJobs')) || [];
-
-    // Initialize Pinned section
-    window.onload = renderPinned;
-
-    // Feature 1: Listen for Enter Key
-    document.getElementById('user-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') send();
-    });
-
-    // Feature 2: Pinning Logic
-    function togglePin(encodedData) {
-      const job = JSON.parse(atob(encodedData));
-      const exists = pinnedJobs.findIndex(j => j.url === job.url);
-      if (exists === -1) pinnedJobs.push(job);
-      else pinnedJobs.splice(exists, 1);
-      
-      localStorage.setItem('pinnedJobs', JSON.stringify(pinnedJobs));
-      renderPinned();
-    }
-
-    function renderPinned() {
-      const section = document.getElementById('pinned-section');
-      const container = document.getElementById('pinned-container');
-      if (pinnedJobs.length === 0) { section.style.display = 'none'; return; }
-      
-      section.style.display = 'block';
-      container.innerHTML = pinnedJobs.map(job => `
-        <div class="result-card" style="border-top: 4px solid #000">
-          <div class="card-title">${job.title}</div>
-          <a href="${job.url}" target="_blank" class="apply-link">View Site ↗</a>
-          <button onclick="togglePin('${btoa(JSON.stringify(job))}')" class="pin-btn" style="margin-left:10px; color:red;">Remove</button>
-        </div>
-      `).join('');
-    }
+    // Enter Key Support
+    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') send(); });
+    btn.addEventListener('click', send);
 
     async function send() {
-      const input = document.getElementById('user-input');
-      const query = input.value.trim();
-      if (!query || loading) return;
+        const query = input.value.trim();
+        if (!query) return;
 
-      loading = true;
-      const chat = document.getElementById('chat');
-      chat.innerHTML += `<div class="msg-user">${query}</div>`;
-      input.value = '';
-
-      try {
-        const res = await fetch('/api/search', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: [{ role: 'user', content: query }] })
-        });
-        const data = await res.json();
-        chat.innerHTML += `<div class="msg-ai">${data.message}</div>`;
-
-        const list = document.getElementById('results-list');
-        list.innerHTML = '';
-        document.getElementById('results-panel').style.display = 'block';
-        document.getElementById('results-count').innerText = `${data.results?.length || 0} Opportunities Found`;
-
-        data.results?.forEach(item => {
-          const days = parseInt(item.daysLeft) || 30;
-          const colorClass = days < 14 ? 'red' : days < 30 ? 'amber' : 'green';
-          const encoded = btoa(JSON.stringify(item));
-          
-          const card = document.createElement('div');
-          card.className = `result-card ${colorClass}`;
-          card.innerHTML = `
-            <div class="card-title">${item.title}</div>
-            <div class="card-desc">${item.description}</div>
-            <div style="font-size:11px; margin-bottom:10px;">${item.deadline}</div>
-            <div style="display:flex; justify-content:space-between;">
-                <a href="${item.url}" target="_blank" class="apply-link">Apply ↗</a>
-                <button onclick="togglePin('${encoded}')" class="pin-btn">📌 Pin</button>
-            </div>
-          `;
-          list.appendChild(card);
-        });
-      } catch (err) {
-        chat.innerHTML += `<div class="msg-ai">Error contacting server.</div>`;
-      } finally {
-        loading = false;
+        // 1. Add User Bubble
+        chat.innerHTML += `<div class="msg-user">${query}</div>`;
+        input.value = '';
         chat.scrollTop = chat.scrollHeight;
-      }
+
+        try {
+            const res = await fetch('/api/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [{ role: 'user', content: query }] })
+            });
+
+            const data = await res.json();
+
+            // 2. Safety: check if message exists to avoid "undefined"
+            const aiMessage = data.message || "I found some opportunities for you below.";
+            chat.innerHTML += `<div class="msg-ai">${aiMessage}</div>`;
+
+            // 3. Render Cards
+            const grid = document.getElementById('results-grid');
+            grid.innerHTML = '';
+            document.getElementById('results-panel').style.display = 'block';
+            
+            const results = data.results || [];
+            document.getElementById('count-text').innerText = `${results.length} Found`;
+
+            results.forEach(item => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <strong>${item.title || 'Untitled'}</strong>
+                        <p style="font-size:12px; color:#666">${item.description || ''}</p>
+                        <a href="${item.url}" target="_blank" style="color:green; font-size:12px;">Apply ↗</a>
+                    </div>
+                `;
+            });
+
+        } catch (e) {
+            chat.innerHTML += `<div class="msg-ai" style="color:red">Error connecting to engine.</div>`;
+        }
+        chat.scrollTop = chat.scrollHeight;
     }
-  </script>
+</script>
+
 </body>
 </html>
