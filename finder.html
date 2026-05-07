@@ -1,54 +1,124 @@
-let chatHistory = []; // Add this at the top of your script
-
-async function send() {
-    const input = document.getElementById('user-input');
-    const query = input.value.trim();
-    if (!query || loading) return;
-
-    loading = true;
-    const chat = document.getElementById('chat');
-    
-    // Add User Bubble
-    chat.innerHTML += `<div class="msg-user">${query}</div>`;
-    input.value = '';
-    chat.scrollTop = chat.scrollHeight;
-
-    // Save to history
-    chatHistory.push({ role: "user", content: query });
-
-    try {
-        const res = await fetch('/api/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: chatHistory })
-        });
-        const data = await res.json();
-
-        // Add AI Chat Bubble
-        chat.innerHTML += `<div class="msg-ai">${data.message}</div>`;
-        chatHistory.push({ role: "assistant", content: data.message });
-
-        // Update Results Grid if they exist
-        const grid = document.getElementById('results-grid');
-        const panel = document.getElementById('results-panel');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jannah | Opportunity Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #f5f4f0; --text: #0f0f0f; --accent: #00c853; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text); }
+        .container { max-width: 800px; margin: 0 auto; }
         
-        if (data.results && data.results.length > 0) {
-            grid.innerHTML = '';
-            panel.style.display = 'block';
-            data.results.forEach(item => {
-                grid.innerHTML += `
-                    <div class="card" style="border-left: 4px solid #00c853; background:white; padding:15px; border-radius:10px; margin-bottom:10px;">
-                        <strong>${item.title}</strong>
-                        <p style="font-size:12px; color:#666">${item.description}</p>
-                        <a href="${item.url}" target="_blank" style="color:#00c853; font-weight:bold; text-decoration:none;">Apply ↗</a>
-                    </div>`;
-            });
+        /* Nav */
+        nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-family: 'Space Mono'; font-size: 13px; }
+        .nav-logo { font-weight: 700; text-decoration: none; color: #000; }
+
+        /* Chat Window */
+        #chat {
+            background: #fff; height: 400px; border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 16px; padding: 20px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
-    } catch (e) {
-        chat.innerHTML += `<div class="msg-ai">Something went wrong in my circuits.</div>`;
-    } finally {
-        loading = false;
+        .msg-user { align-self: flex-end; background: var(--text); color: #fff; padding: 10px 16px; border-radius: 18px 18px 2px 18px; max-width: 75%; font-size: 14px; }
+        .msg-ai { align-self: flex-start; background: #eee; color: #333; padding: 10px 16px; border-radius: 18px 18px 18px 2px; max-width: 75%; font-size: 14px; line-height: 1.5; }
+
+        /* Input Area */
+        .input-wrap { display: flex; gap: 10px; }
+        input { flex: 1; padding: 15px; border-radius: 12px; border: 1px solid #ddd; outline: none; font-family: 'Outfit'; }
+        button { background: var(--text); color: #fff; border: none; padding: 0 25px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: 0.2s; }
+        button:hover { background: var(--accent); }
+
+        /* Results Grid */
+        #results-panel { margin-top: 30px; display: none; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .card { background: #fff; padding: 20px; border-radius: 12px; border-left: 4px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card h4 { margin: 0 0 8px 0; font-size: 16px; }
+        .card p { font-size: 13px; color: #666; margin-bottom: 12px; }
+        .card a { color: var(--accent); font-weight: 700; text-decoration: none; font-size: 13px; }
+
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav>
+        <a href="index.html" class="nav-logo">JANNAH.A</a>
+        <span>VIBE_CHECK_V2</span>
+    </nav>
+
+    <div id="chat">
+        <div class="msg-ai">Hey Jannah! I'm ready. We can just chat, or I can find you some competitions. What's on your mind?</div>
+    </div>
+
+    <div class="input-wrap">
+        <input type="text" id="user-input" placeholder="Say hi or ask for a hackathon...">
+        <button id="send-btn">SEND</button>
+    </div>
+
+    <div id="results-panel">
+        <h3 id="res-count">0 Opportunities</h3>
+        <div id="results-grid" class="grid"></div>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('user-input');
+    const chat = document.getElementById('chat');
+    const btn = document.getElementById('send-btn');
+    let loading = false;
+
+    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') send(); });
+    btn.addEventListener('click', send);
+
+    async function send() {
+        const query = input.value.trim();
+        if (!query || loading) return;
+
+        loading = true;
+        chat.innerHTML += `<div class="msg-user">${query}</div>`;
+        input.value = '';
         chat.scrollTop = chat.scrollHeight;
+
+        try {
+            const res = await fetch('/api/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [{ role: 'user', content: query }] })
+            });
+            const data = await res.json();
+
+            // 1. AI Chat Response
+            chat.innerHTML += `<div class="msg-ai">${data.message || "I found something!"}</div>`;
+
+            // 2. Opportunities Grid
+            const grid = document.getElementById('results-grid');
+            const panel = document.getElementById('results-panel');
+            
+            if (data.results && data.results.length > 0) {
+                grid.innerHTML = '';
+                panel.style.display = 'block';
+                document.getElementById('res-count').innerText = `${data.results.length} Opportunities`;
+                
+                data.results.forEach(item => {
+                    grid.innerHTML += `
+                        <div class="card">
+                            <h4>${item.title}</h4>
+                            <p>${item.description}</p>
+                            <a href="${item.url}" target="_blank">View Details ↗</a>
+                        </div>`;
+                });
+            }
+        } catch (e) {
+            chat.innerHTML += `<div class="msg-ai">My search engine is acting up. Give me a sec.</div>`;
+        } finally {
+            loading = false;
+            chat.scrollTop = chat.scrollHeight;
+        }
     }
-}
+</script>
+</body>
+</html>
