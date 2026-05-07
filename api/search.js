@@ -5,7 +5,6 @@ export default async function handler(req, res) {
 
   const { messages, filters, deadline } = req.body;
 
-  // ── Inject real today's date so the model never hallucinates the year ──
   const now = new Date();
   const todayStr = now.toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -16,24 +15,32 @@ export default async function handler(req, res) {
     .map(([k]) => k)
     .join(', ');
 
-  const systemPrompt = `You are an AI opportunity finder. Today's date is ${todayStr}. Use this date for all deadline calculations.
+  const systemPrompt = `You are a professional Opportunity Discovery Engine. Today's date is ${todayStr}.
+  
+  TASK: Return a JSON list of 6 REAL opportunities based on the user's request.
+  FILTERS: ${activeFilters || 'none'}. 
+  DEADLINE: ${deadline || 'within 1 month'}.
 
-Find REAL, currently open opportunities (hackathons, competitions, grants, bounties) that exist on the internet RIGHT NOW.
+  FORMAT RULES:
+  1. Return ONLY raw JSON.
+  2. Use "daysLeft" as a numeric string.
+  3. Ensure URLs are direct links (e.g., devpost.com/hackathons).
+  4. If an opportunity is expired or data is uncertain, EXCLUDE it.
 
-Active filters: ${activeFilters || 'none'}. Deadline window: ${deadline || 'within 1 month'}.
-
-CRITICAL RULES:
-1. Only return opportunities with REAL, working URLs that actually exist today. Do NOT invent or guess URLs.
-2. Prefer well-known platforms: devpost.com, hackerearth.com, mlcontests.com, kaggle.com, ctftime.org, replit.com/bounties, gitcoin.co, unstop.com, challengerocket.com, etc.
-3. Calculate daysLeft from today (${todayStr}) to the actual deadline date. Be accurate.
-4. If you are not certain an opportunity is currently open, do not include it.
-5. Sort by soonest deadline first.
-6. Max 6 results.
-
-Return ONLY valid JSON, no markdown, no extra text:
-{"message":"brief friendly 1-sentence note","results":[{"title":"Exact opportunity name","description":"1-2 sentences: what it is, prizes, who it is for","deadline":"Closes: [Month Day, Year] · [X] days left","daysLeft":"[number]","url":"https://real-working-url.com","tags":["tag1","tag2"]}]}
-
-daysLeft must be a plain number string like "5" not "5 days".`;
+  JSON STRUCTURE:
+  {
+    "message": "Found 6 opportunities for you.",
+    "results": [
+      {
+        "title": "Name",
+        "description": "Short summary",
+        "deadline": "Closes: [Date] · [X] days left",
+        "daysLeft": "5",
+        "url": "https://...",
+        "tags": ["AI", "Remote"]
+      }
+    ]
+  }`;
 
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -48,24 +55,23 @@ daysLeft must be a plain number string like "5" not "5 days".`;
           { role: 'system', content: systemPrompt },
           ...messages
         ],
-        max_tokens: 2000,
-        temperature: 0.3, // lower = more factual, fewer hallucinations
+        temperature: 0.2, // Lower temp reduces "creative" hallucinations
+        response_format: { type: "json_object" } // Forces Groq to output JSON
       }),
     });
 
     const data = await response.json();
+    
+    // Groq returns choices[0].message.content as a string
+    const content = data.choices?.[0]?.message?.content;
+    
+    // Parse the string into actual JSON to send back to your frontend
+    const parsedContent = JSON.parse(content);
 
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: data.error?.message || 'Groq API error'
-      });
-    }
-
-    const text = data.choices?.[0]?.message?.content || '';
-    return res.status(200).json({ content: [{ type: 'text', text }] });
+    return res.status(200).json(parsedContent);
 
   } catch (err) {
     console.error('Search handler error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Failed to fetch results' });
   }
 }
