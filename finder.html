@@ -1,134 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Opportunity Finder</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Outfit', sans-serif; background: #f5f4f0; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        
-        /* THE CHAT BOX */
-        #chat {
-            background: white;
-            height: 450px;
-            border: 1px solid #ddd;
-            border-radius: 16px;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
+let chatHistory = []; // Add this at the top of your script
 
-        /* User Message (Right) */
-        .msg-user {
-            align-self: flex-end;
-            background: #000;
-            color: #fff;
-            padding: 10px 16px;
-            border-radius: 18px 18px 2px 18px;
-            max-width: 70%;
-            font-size: 14px;
-        }
-
-        /* AI Message (Left) */
-        .msg-ai {
-            align-self: flex-start;
-            background: #f0f0f0;
-            color: #333;
-            padding: 10px 16px;
-            border-radius: 18px 18px 18px 2px;
-            max-width: 70%;
-            font-size: 14px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .input-group { display: flex; gap: 10px; }
-        input { flex: 1; padding: 15px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
-        button { background: #000; color: #fff; border: none; padding: 0 30px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        
-        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
-        .card { background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #eee; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2 style="text-align:center;">Jannah.A | Finder</h2>
-    
-    <div id="chat">
-        <div class="msg-ai">Hello! I can help you find hackathons or competitions. What are you looking for?</div>
-    </div>
-
-    <div class="input-group">
-        <input type="text" id="user-input" placeholder="Type your search and press Enter...">
-        <button id="find-btn">FIND</button>
-    </div>
-
-    <div id="results-panel" style="display:none;">
-        <h3 id="count-text">0 found</h3>
-        <div id="results-grid" class="results-grid"></div>
-    </div>
-</div>
-
-<script>
+async function send() {
     const input = document.getElementById('user-input');
+    const query = input.value.trim();
+    if (!query || loading) return;
+
+    loading = true;
     const chat = document.getElementById('chat');
-    const btn = document.getElementById('find-btn');
+    
+    // Add User Bubble
+    chat.innerHTML += `<div class="msg-user">${query}</div>`;
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
 
-    // Enter Key Support
-    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') send(); });
-    btn.addEventListener('click', send);
+    // Save to history
+    chatHistory.push({ role: "user", content: query });
 
-    async function send() {
-        const query = input.value.trim();
-        if (!query) return;
+    try {
+        const res = await fetch('/api/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: chatHistory })
+        });
+        const data = await res.json();
 
-        // 1. Add User Bubble
-        chat.innerHTML += `<div class="msg-user">${query}</div>`;
-        input.value = '';
-        chat.scrollTop = chat.scrollHeight;
+        // Add AI Chat Bubble
+        chat.innerHTML += `<div class="msg-ai">${data.message}</div>`;
+        chatHistory.push({ role: "assistant", content: data.message });
 
-        try {
-            const res = await fetch('/api/search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: [{ role: 'user', content: query }] })
-            });
-
-            const data = await res.json();
-
-            // 2. Safety: check if message exists to avoid "undefined"
-            const aiMessage = data.message || "I found some opportunities for you below.";
-            chat.innerHTML += `<div class="msg-ai">${aiMessage}</div>`;
-
-            // 3. Render Cards
-            const grid = document.getElementById('results-grid');
+        // Update Results Grid if they exist
+        const grid = document.getElementById('results-grid');
+        const panel = document.getElementById('results-panel');
+        
+        if (data.results && data.results.length > 0) {
             grid.innerHTML = '';
-            document.getElementById('results-panel').style.display = 'block';
-            
-            const results = data.results || [];
-            document.getElementById('count-text').innerText = `${results.length} Found`;
-
-            results.forEach(item => {
+            panel.style.display = 'block';
+            data.results.forEach(item => {
                 grid.innerHTML += `
-                    <div class="card">
-                        <strong>${item.title || 'Untitled'}</strong>
-                        <p style="font-size:12px; color:#666">${item.description || ''}</p>
-                        <a href="${item.url}" target="_blank" style="color:green; font-size:12px;">Apply ↗</a>
-                    </div>
-                `;
+                    <div class="card" style="border-left: 4px solid #00c853; background:white; padding:15px; border-radius:10px; margin-bottom:10px;">
+                        <strong>${item.title}</strong>
+                        <p style="font-size:12px; color:#666">${item.description}</p>
+                        <a href="${item.url}" target="_blank" style="color:#00c853; font-weight:bold; text-decoration:none;">Apply ↗</a>
+                    </div>`;
             });
-
-        } catch (e) {
-            chat.innerHTML += `<div class="msg-ai" style="color:red">Error connecting to engine.</div>`;
         }
+
+    } catch (e) {
+        chat.innerHTML += `<div class="msg-ai">Something went wrong in my circuits.</div>`;
+    } finally {
+        loading = false;
         chat.scrollTop = chat.scrollHeight;
     }
-</script>
-
-</body>
-</html>
+}
