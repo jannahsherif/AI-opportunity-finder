@@ -3,88 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Opportunity Finder | Jannah Abdelhay</title>
+  <title>Opportunity Finder | Jannah</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Outfit:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f5f4f0; --surface: #ffffff; --text: #0f0f0f;
-      --accent: #00c853; --accent-dark: #009624;
-      --border: rgba(0,0,0,0.1);
+      --bg: #f5f4f0; --text: #0f0f0f; --accent: #00c853; --border: rgba(0,0,0,0.1);
     }
-    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+    .nav { max-width: 900px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
     
-    /* Nav */
-    nav { padding: 20px 40px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); background: #fff; }
-    .nav-logo { font-family: 'Space Mono'; font-weight: bold; text-decoration: none; color: #000; }
+    /* Disclaimer Bar */
+    .ai-warning { 
+        background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; 
+        font-size: 12px; text-align: center; margin-bottom: 20px; border: 1px solid #ffeeba;
+    }
 
-    /* Chat Area */
-    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
     #chat { 
-      height: 400px; overflow-y: auto; background: #fff; 
-      border: 1px solid var(--border); border-radius: 12px; 
-      padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;
+      max-width: 900px; height: 300px; margin: 0 auto 20px; background: #fff; 
+      border: 1px solid var(--border); border-radius: 12px; padding: 20px; 
+      overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
     }
-    
-    /* Chat Bubbles */
-    .msg-user { align-self: flex-end; background: var(--text); color: #fff; padding: 10px 16px; border-radius: 15px 15px 0 15px; font-size: 14px; max-width: 80%; }
-    .msg-ai { align-self: flex-start; background: var(--border); color: var(--text); padding: 10px 16px; border-radius: 15px 15px 15px 0; font-size: 14px; max-width: 80%; }
+    .msg-user { align-self: flex-end; background: var(--text); color: #fff; padding: 8px 14px; border-radius: 12px 12px 0 12px; font-size: 14px; }
+    .msg-ai { align-self: flex-start; background: #eee; padding: 8px 14px; border-radius: 12px 12px 12px 0; font-size: 14px; }
 
-    /* Input */
-    .input-box { display: flex; gap: 10px; }
-    input { flex: 1; padding: 15px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Outfit'; }
+    .input-container { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; }
+    input { flex: 1; padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
     button { padding: 0 25px; background: var(--text); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    button:disabled { opacity: 0.5; }
 
     /* Results */
-    #results-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-    .result-card { background: #fff; padding: 20px; border-radius: 10px; border: 1px solid var(--border); position: relative; }
+    #pinned-section { max-width: 900px; margin: 30px auto; display: none; }
+    #results-panel { max-width: 900px; margin: 30px auto; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+    
+    .result-card { background: #fff; padding: 20px; border-radius: 10px; border: 1px solid var(--border); transition: transform 0.2s; }
+    .result-card:hover { transform: translateY(-3px); }
     .result-card.red { border-top: 4px solid #ff4444; }
     .result-card.amber { border-top: 4px solid #ffbb33; }
     .result-card.green { border-top: 4px solid #00c851; }
-    .card-title { font-weight: bold; margin-bottom: 5px; }
-    .card-desc { font-size: 13px; color: #666; margin-bottom: 10px; }
-    .apply-link { color: var(--accent-dark); text-decoration: none; font-weight: bold; font-size: 13px; }
     
-    .status-area { font-size: 12px; font-family: 'Space Mono'; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-    .sdot.loading { color: var(--accent); animation: blink 1s infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
+    .card-title { font-weight: bold; margin-bottom: 5px; }
+    .card-desc { font-size: 13px; color: #666; margin-bottom: 12px; }
+    .apply-link { color: var(--accent); text-decoration: none; font-weight: bold; font-size: 13px; }
+    .pin-btn { background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
   </style>
 </head>
 <body>
 
-  <nav>
-    <a href="index.html" class="nav-logo">J<span>.</span>A</a>
-    <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" style="text-decoration:none; color:#666; font-size:12px;">LinkedIn ↗</a>
-  </nav>
+  <div class="nav">
+    <a href="index.html" style="text-decoration:none; color:#000; font-weight:bold;">JANNAH<span>.</span>A</a>
+    <span style="font-family:'Space Mono'; font-size:12px;">OPPORTUNITY_FINDER_V2</span>
+  </div>
 
-  <div class="container">
-    <div class="status-area">
-        <span id="status-dot" class="sdot">●</span>
-        <span id="status-text">SYSTEM READY</span>
-    </div>
+  <div class="ai-warning">
+    ⚠️ <strong>Disclaimer:</strong> This content is AI-generated using live search. Please verify deadlines and official websites before applying.
+  </div>
 
-    <div id="chat">
-        <div class="msg-ai">Hello! What kind of opportunities are we looking for today?</div>
-    </div>
+  <div id="chat">
+    <div class="msg-ai">Ready. Enter a search query (e.g., "Web3 Hackathons") and press Enter.</div>
+  </div>
 
-    <div id="empty" style="text-align:center; color:#999; margin-bottom:20px;">No searches yet.</div>
+  <div class="input-container">
+    <input type="text" id="user-input" placeholder="What are you looking for?">
+    <button onclick="send()">FIND</button>
+  </div>
 
-    <div class="input-box">
-        <input type="text" id="user-input" placeholder="e.g. Cybersecurity hackathons for summer 2026...">
-        <button id="send-btn" onclick="send()">FIND</button>
-    </div>
+  <div id="pinned-section">
+    <h3>Pinned for Later 📌</h3>
+    <div id="pinned-container" class="grid"></div>
+  </div>
 
-    <div id="results-panel" style="display:none; margin-top: 40px;">
-        <h3 id="results-count">0 Opportunities Found</h3>
-        <div id="results-list"></div>
-    </div>
+  <div id="results-panel" style="display:none;">
+    <h3 id="results-count">0 Opportunities Found</h3>
+    <div id="results-list" class="grid"></div>
   </div>
 
   <script>
     let loading = false;
-    // Set default filters so the code doesn't break
-    let filters = { ai: true, security: true }; 
-    let deadline = "within 1 month";
+    let pinnedJobs = JSON.parse(localStorage.getItem('pinnedJobs')) || [];
+
+    // Initialize Pinned section
+    window.onload = renderPinned;
+
+    // Feature 1: Listen for Enter Key
+    document.getElementById('user-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') send();
+    });
+
+    // Feature 2: Pinning Logic
+    function togglePin(encodedData) {
+      const job = JSON.parse(atob(encodedData));
+      const exists = pinnedJobs.findIndex(j => j.url === job.url);
+      if (exists === -1) pinnedJobs.push(job);
+      else pinnedJobs.splice(exists, 1);
+      
+      localStorage.setItem('pinnedJobs', JSON.stringify(pinnedJobs));
+      renderPinned();
+    }
+
+    function renderPinned() {
+      const section = document.getElementById('pinned-section');
+      const container = document.getElementById('pinned-container');
+      if (pinnedJobs.length === 0) { section.style.display = 'none'; return; }
+      
+      section.style.display = 'block';
+      container.innerHTML = pinnedJobs.map(job => `
+        <div class="result-card" style="border-top: 4px solid #000">
+          <div class="card-title">${job.title}</div>
+          <a href="${job.url}" target="_blank" class="apply-link">View Site ↗</a>
+          <button onclick="togglePin('${btoa(JSON.stringify(job))}')" class="pin-btn" style="margin-left:10px; color:red;">Remove</button>
+        </div>
+      `).join('');
+    }
 
     async function send() {
       const input = document.getElementById('user-input');
@@ -92,10 +121,6 @@
       if (!query || loading) return;
 
       loading = true;
-      document.getElementById('status-dot').className = 'sdot loading';
-      document.getElementById('status-text').innerText = 'SEARCHING NETWORK...';
-      document.getElementById('empty').style.display = 'none';
-
       const chat = document.getElementById('chat');
       chat.innerHTML += `<div class="msg-user">${query}</div>`;
       input.value = '';
@@ -104,44 +129,39 @@
         const res = await fetch('/api/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: [{ role: 'user', content: query }],
-            filters: filters,
-            deadline: deadline
-          })
+          body: JSON.stringify({ messages: [{ role: 'user', content: query }] })
         });
-
         const data = await res.json();
-        chat.innerHTML += `<div class="msg-ai">${data.message || "Results retrieved."}</div>`;
+        chat.innerHTML += `<div class="msg-ai">${data.message}</div>`;
 
         const list = document.getElementById('results-list');
         list.innerHTML = '';
         document.getElementById('results-panel').style.display = 'block';
         document.getElementById('results-count').innerText = `${data.results?.length || 0} Opportunities Found`;
 
-        if (data.results) {
-            data.results.forEach(item => {
-                const days = parseInt(item.daysLeft) || 30;
-                const colorClass = days < 10 ? 'red' : days < 30 ? 'amber' : 'green';
-                const card = document.createElement('div');
-                card.className = `result-card ${colorClass}`;
-                card.innerHTML = `
-                    <div class="card-title">${item.title}</div>
-                    <div class="card-desc">${item.description}</div>
-                    <div style="font-size:11px; margin-bottom:10px;">${item.deadline}</div>
-                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="apply-link">Apply ↗</a>
-                `;
-                list.appendChild(card);
-            });
-        }
-        chat.scrollTop = chat.scrollHeight;
-
+        data.results?.forEach(item => {
+          const days = parseInt(item.daysLeft) || 30;
+          const colorClass = days < 14 ? 'red' : days < 30 ? 'amber' : 'green';
+          const encoded = btoa(JSON.stringify(item));
+          
+          const card = document.createElement('div');
+          card.className = `result-card ${colorClass}`;
+          card.innerHTML = `
+            <div class="card-title">${item.title}</div>
+            <div class="card-desc">${item.description}</div>
+            <div style="font-size:11px; margin-bottom:10px;">${item.deadline}</div>
+            <div style="display:flex; justify-content:space-between;">
+                <a href="${item.url}" target="_blank" class="apply-link">Apply ↗</a>
+                <button onclick="togglePin('${encoded}')" class="pin-btn">📌 Pin</button>
+            </div>
+          `;
+          list.appendChild(card);
+        });
       } catch (err) {
-        chat.innerHTML += `<div class="msg-ai" style="color:red">ERROR: Connection to engine failed.</div>`;
+        chat.innerHTML += `<div class="msg-ai">Error contacting server.</div>`;
       } finally {
         loading = false;
-        document.getElementById('status-dot').className = 'sdot';
-        document.getElementById('status-text').innerText = 'SYSTEM READY';
+        chat.scrollTop = chat.scrollHeight;
       }
     }
   </script>
