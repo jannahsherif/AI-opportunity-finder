@@ -1,32 +1,22 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).send();
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-  const { messages } = req.body;
-  const lastMessage = messages[messages.length - 1].content;
+  const { messages, filters, deadline } = req.body;
+  const activeFilters = Object.entries(filters || {})
+    .filter(([, v]) => v)
+    .map(([k]) => k)
+    .join(', ');
+
+  const systemPrompt = `You are an AI opportunity finder. Find real, currently open opportunities (hackathons, competitions, grants, bounties) online.
+Active filters: ${activeFilters || 'none'}. Deadline window: ${deadline || 'within 1 month'}.
+Search the web for REAL opportunities and return ONLY valid JSON, no markdown, no extra text:
+{"message":"brief friendly note","results":[{"title":"...","description":"1-2 sentences, prizes, who it's for","deadline":"Last date to apply: [date] · [X] days left","daysLeft":"[number] days","url":"https://real-url.com","tags":["tag1","tag2"]}]}
+Rules: real URLs only, sort by soonest deadline first, max 6 results, daysLeft must be a number like "5 days".`;
 
   try {
-    // Determine if we should search
-    const isSearchNeeded = /hackathon|competition|opportunity|find|vibe coding|bounty/i.test(lastMessage);
-
-    let searchResults = [];
-    let context = "No search performed.";
-
-    if (isSearchNeeded) {
-      const search = await fetch('https://api.tavily.com/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          api_key: process.env.TAVILY_API_KEY,
-          query: `active 2026 competitions hackathons ${lastMessage}`,
-          max_results: 5
-        })
-      });
-      const sData = await search.json();
-      context = sData.results?.map(r => r.content).join("\n") || "";
-    }
-
-    // Generate Final Chat Response + JSON
-    const groq = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,17 +25,24 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages: [
-          { role: 'system', content: 'You are Jannahs personal assistant. Be smart, witty, and helpful. If searching, return JSON with "message" and "results" (array). If just chatting, return JSON with "message" and empty "results".' },
-          { role: 'user', content: `Context: ${context}\n\nUser said: ${lastMessage}` }
+          { role: 'system', content: systemPrompt },
+          ...messages
         ],
-        response_format: { type: "json_object" }
+        max_tokens: 2000,
       }),
     });
 
-    const gData = await groq.json();
-    return res.status(200).json(JSON.parse(gData.choices[0].message.content));
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: data.error?.message || 'API error' });
+    }
+
+    const text = data.choices?.[0]?.message?.content || '';
+    return res.status(200).json({ content: [{ type: 'text', text }] });
 
   } catch (err) {
-    return res.status(200).json({ message: "I'm here, but my data feed is lagging.", results: [] });
+    console.error(err);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
