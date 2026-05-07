@@ -5,29 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Opportunity Finder — Jannah Abdelhay</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #080808;
-      --surface: #111;
-      --surface2: #181818;
-      --border: rgba(255,255,255,0.07);
-      --border2: rgba(255,255,255,0.13);
-      --text: #f0eff4;
-      --muted: #555;
-      --muted2: #888;
-      --accent: #c8b97a;
-      --accent-dim: rgba(200,185,122,0.1);
-      --red: #ff4f4f;
-      --red-bg: rgba(255,79,79,0.08);
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface2: #f0efe9;
+      --border: rgba(0,0,0,0.08);
+      --border2: rgba(0,0,0,0.15);
+      --text: #0f0f0f;
+      --muted: #999;
+      --muted2: #666;
+      --accent: #00c853;        /* electric green */
+      --accent-dim: rgba(0,200,83,0.08);
+      --accent-dark: #009624;
+      --red: #f53b3b;
+      --red-bg: rgba(245,59,59,0.07);
       --amber: #f5a623;
-      --amber-bg: rgba(245,166,35,0.08);
-      --green: #3ecf8e;
-      --green-bg: rgba(62,207,142,0.08);
-      --font: 'Syne', sans-serif;
-      --mono: 'DM Mono', monospace;
+      --amber-bg: rgba(245,166,35,0.07);
+      --green: #00c853;
+      --green-bg: rgba(0,200,83,0.07);
+      --tag-bg: #eeeee8;
+      --font: 'Outfit', sans-serif;
+      --mono: 'Space Mono', monospace;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
     }
 
     body {
@@ -40,195 +44,274 @@
       overflow: hidden;
     }
 
+    /* NAV */
     nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 32px;
+      padding: 0 32px;
+      height: 56px;
       border-bottom: 1px solid var(--border);
       background: var(--surface);
       flex-shrink: 0;
+      box-shadow: var(--shadow);
     }
 
     .nav-logo {
       font-family: var(--mono);
-      font-size: 12px;
-      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
       text-decoration: none;
-      letter-spacing: 0.05em;
+      letter-spacing: -0.01em;
     }
+    .nav-logo span { color: var(--accent); }
 
-    .nav-links { display: flex; gap: 24px; align-items: center; }
-    .nav-links a {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.07em;
+    .nav-right { display: flex; gap: 8px; align-items: center; }
+
+    .nav-btn {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--muted2);
       text-decoration: none;
-      transition: color 0.2s;
+      padding: 6px 14px;
+      border-radius: 4px;
+      transition: all 0.15s;
+      font-family: var(--mono);
     }
-    .nav-links a:hover { color: var(--text); }
-    .nav-links a.active { color: var(--accent); }
+    .nav-btn:hover { background: var(--surface2); color: var(--text); }
+    .nav-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
 
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted2);
+      background: var(--surface2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
     .status-dot {
-      width: 7px; height: 7px;
+      width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--green);
-      display: inline-block;
+      flex-shrink: 0;
     }
-    .status-dot.loading { background: var(--amber); animation: pulse 1s infinite; }
+    .status-dot.loading { background: var(--amber); animation: pulse 0.8s infinite; }
     .status-dot.error { background: var(--red); }
-    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+    @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
 
-    .layout {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
+    /* LAYOUT */
+    .layout { display: flex; flex: 1; overflow: hidden; }
 
     /* SIDEBAR */
     .sidebar {
-      width: 240px;
+      width: 220px;
       border-right: 1px solid var(--border);
-      padding: 20px 16px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      overflow-y: auto;
       background: var(--surface);
       flex-shrink: 0;
+      overflow-y: auto;
     }
 
-    .sidebar-section { margin-bottom: 8px; }
+    .sidebar-section { padding: 16px 14px 8px; }
+
     .sidebar-label {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 9px;
       color: var(--muted);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      padding: 10px 8px 6px;
+      padding: 0 4px 10px;
     }
 
     .filter-chip {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 9px 10px;
+      gap: 9px;
+      padding: 8px 10px;
       border-radius: 6px;
-      border: 1px solid transparent;
       font-size: 12px;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.12s;
       color: var(--muted2);
       user-select: none;
+      border: 1px solid transparent;
     }
     .filter-chip:hover { background: var(--surface2); color: var(--text); }
-    .filter-chip.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
-    .filter-chip input { display: none; }
-
-    .legend {
-      margin-top: auto;
-      padding: 16px 8px 0;
-      border-top: 1px solid var(--border);
+    .filter-chip.active {
+      background: var(--accent-dim);
+      color: var(--accent-dark);
+      border-color: rgba(0,200,83,0.25);
+      font-weight: 600;
     }
 
+    .chip-dot {
+      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+      background: var(--muted);
+      transition: background 0.12s;
+    }
+    .filter-chip.active .chip-dot { background: var(--accent); }
+
+    .sidebar-divider { height: 1px; background: var(--border); margin: 8px 14px; }
+
+    .legend { padding: 12px 14px; margin-top: auto; }
     .legend-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted2);
-      padding: 5px 0;
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 10px; color: var(--muted2); padding: 4px 0;
     }
-
     .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .dot-r { background: var(--red); }
     .dot-a { background: var(--amber); }
     .dot-g { background: var(--green); }
 
-    /* MAIN */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-width: 0;
+    .saved-section { padding: 8px 14px; }
+    .saved-count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+      background: var(--accent-dim);
+      color: var(--accent-dark);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(0,200,83,0.2);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 600;
     }
+    .saved-count-badge:hover { background: rgba(0,200,83,0.15); }
+
+    /* MAIN */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 
     /* CHAT */
     .chat-panel {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 28px;
+      padding: 28px 32px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       min-height: 0;
     }
 
+    /* Empty state */
     .empty-state {
       margin: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 16px;
-      max-width: 420px;
+      gap: 20px;
+      max-width: 480px;
       padding: 40px 0;
+      animation: fadeUp 0.5s ease both;
     }
 
+    .empty-icon-wrap {
+      position: relative;
+      width: 72px; height: 72px;
+    }
     .empty-icon {
-      width: 56px; height: 56px;
-      border: 1px solid var(--border2);
-      border-radius: 14px;
+      width: 72px; height: 72px;
+      border: 2px solid var(--border2);
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 28px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      animation: iconFloat 3s ease-in-out infinite;
     }
+    @keyframes iconFloat {
+      0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)}
+    }
+    .empty-icon-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 24px;
+      border: 1px dashed rgba(0,200,83,0.3);
+      animation: ringRotate 8s linear infinite;
+    }
+    @keyframes ringRotate { to { transform: rotate(360deg); } }
 
-    .empty-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
-    .empty-desc { font-size: 13px; color: var(--muted2); line-height: 1.7; }
+    .empty-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+    .empty-title span { color: var(--accent-dark); }
 
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .chip {
+    .empty-desc { font-size: 14px; color: var(--muted2); line-height: 1.7; }
+
+    .suggestion-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .sugg-chip {
       font-size: 12px;
+      font-family: var(--mono);
       padding: 7px 14px;
       border: 1px solid var(--border2);
-      border-radius: 20px;
+      border-radius: 6px;
       color: var(--muted2);
+      background: var(--surface);
       cursor: pointer;
       transition: all 0.15s;
-      font-family: var(--mono);
     }
-    .chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .sugg-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent-dark);
+      background: var(--accent-dim);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,200,83,0.15);
+    }
 
+    /* Messages */
     .msg-user {
       align-self: flex-end;
-      background: var(--accent);
-      color: #080808;
-      padding: 11px 16px;
+      background: var(--text);
+      color: var(--bg);
+      padding: 10px 16px;
       border-radius: 14px;
       border-bottom-right-radius: 3px;
       font-size: 13px;
-      max-width: 75%;
-      line-height: 1.6;
       font-weight: 500;
+      max-width: 72%;
+      line-height: 1.6;
+      animation: msgIn 0.2s ease both;
+      box-shadow: var(--shadow);
     }
 
     .msg-ai {
       align-self: flex-start;
-      background: var(--surface2);
+      background: var(--surface);
       border: 1px solid var(--border);
-      padding: 11px 16px;
+      padding: 10px 16px;
       border-radius: 14px;
       border-bottom-left-radius: 3px;
       font-size: 13px;
-      max-width: 85%;
+      max-width: 82%;
       line-height: 1.7;
-      color: rgba(240,239,244,0.85);
+      color: var(--muted2);
+      animation: msgIn 0.2s ease both;
+      box-shadow: var(--shadow);
+    }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.97); }
+      to   { opacity: 1; transform: none; }
     }
 
     .thinking {
@@ -237,29 +320,34 @@
       align-items: center;
       gap: 10px;
       font-family: var(--mono);
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted2);
-      padding: 8px 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 20px;
+      animation: msgIn 0.2s ease both;
     }
 
     .spinner {
       width: 14px; height: 14px;
-      border: 1.5px solid var(--border2);
+      border: 2px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+      animation: spin 0.6s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* RESULTS */
     .results-panel {
-      border-top: 1px solid var(--border);
+      border-top: 2px solid var(--border);
       max-height: 340px;
       overflow-y: auto;
-      padding: 16px 28px;
+      padding: 14px 32px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      background: var(--bg);
     }
 
     .results-header {
@@ -271,9 +359,9 @@
 
     .results-title {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 9px;
       color: var(--muted);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
     }
 
@@ -291,17 +379,23 @@
       gap: 14px;
       align-items: flex-start;
       background: var(--surface);
-      transition: border-color 0.15s;
+      transition: all 0.15s;
       animation: fadeUp 0.3s ease both;
       flex-shrink: 0;
+      position: relative;
+      box-shadow: var(--shadow);
     }
-    .result-card:hover { border-color: var(--border2); }
+    .result-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border2);
+    }
     .result-card.red { border-left: 3px solid var(--red); }
     .result-card.amber { border-left: 3px solid var(--amber); }
     .result-card.green { border-left: 3px solid var(--green); }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: none; }
     }
 
@@ -314,186 +408,313 @@
 
     .card-body { flex: 1; min-width: 0; }
     .card-title {
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 14px; font-weight: 700;
       color: var(--text);
       margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .card-desc {
-      font-size: 12px;
-      color: var(--muted2);
-      line-height: 1.6;
-      margin-bottom: 10px;
+      font-size: 12px; color: var(--muted2);
+      line-height: 1.6; margin-bottom: 10px;
     }
     .card-footer {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     }
 
     .deadline-badge {
-      font-family: var(--mono);
-      font-size: 11px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 500;
+      font-family: var(--mono); font-size: 10px;
+      padding: 3px 10px; border-radius: 20px; font-weight: 700;
     }
     .badge-red   { background: var(--red-bg);   color: var(--red); }
     .badge-amber { background: var(--amber-bg); color: var(--amber); }
-    .badge-green { background: var(--green-bg); color: var(--green); }
+    .badge-green { background: var(--green-bg); color: var(--accent-dark); }
 
     .tag {
-      font-size: 11px;
+      font-size: 11px; font-family: var(--mono);
       padding: 3px 8px;
-      background: var(--surface2);
+      background: var(--tag-bg);
       color: var(--muted2);
       border-radius: 4px;
-      border: 1px solid var(--border);
     }
 
     .apply-link {
       margin-left: auto;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--accent);
+      font-size: 11px; font-weight: 700;
+      color: var(--surface);
+      background: var(--text);
       text-decoration: none;
       white-space: nowrap;
-      padding: 4px 12px;
-      border: 1px solid rgba(200,185,122,0.3);
-      border-radius: 4px;
-      transition: background 0.15s;
+      padding: 5px 12px;
+      border-radius: 5px;
+      transition: all 0.15s;
       font-family: var(--mono);
+      letter-spacing: 0.03em;
     }
-    .apply-link:hover { background: var(--accent-dim); }
+    .apply-link:hover { background: var(--accent-dark); transform: translateY(-1px); }
 
-    /* INPUT */
+    .bookmark-btn {
+      width: 30px; height: 30px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface2);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .bookmark-btn:hover { border-color: var(--accent); background: var(--accent-dim); transform: scale(1.1); }
+    .bookmark-btn.saved { background: var(--accent-dim); border-color: rgba(0,200,83,0.3); }
+
+    /* SAVED DRAWER */
+    .saved-drawer {
+      position: fixed;
+      top: 0; right: -380px;
+      width: 360px;
+      height: 100vh;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .saved-drawer.open { right: 0; }
+
+    .drawer-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .drawer-title {
+      font-weight: 700; font-size: 15px; letter-spacing: -0.02em;
+    }
+    .drawer-close {
+      width: 30px; height: 30px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--muted2);
+      transition: all 0.15s;
+    }
+    .drawer-close:hover { background: var(--red-bg); color: var(--red); }
+
+    .drawer-body { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; }
+    .drawer-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 40px 0; font-family: var(--mono); }
+
+    .saved-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: var(--bg);
+      animation: fadeUp 0.2s ease both;
+    }
+    .saved-card-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .saved-card-dl { font-family: var(--mono); font-size: 10px; color: var(--muted2); margin-bottom: 8px; }
+    .saved-card-actions { display: flex; gap: 8px; }
+    .saved-open-btn {
+      font-size: 11px; font-family: var(--mono); font-weight: 700;
+      padding: 4px 10px; border-radius: 4px;
+      background: var(--text); color: #fff;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .saved-open-btn:hover { background: var(--accent-dark); }
+    .saved-remove-btn {
+      font-size: 11px; font-family: var(--mono);
+      padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border);
+      background: transparent; color: var(--muted2); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .saved-remove-btn:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+    .drawer-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.15);
+      z-index: 199;
+      backdrop-filter: blur(2px);
+    }
+    .drawer-overlay.open { display: block; }
+
+    /* INPUT BAR */
     .input-bar {
       border-top: 1px solid var(--border);
-      padding: 14px 28px;
+      padding: 12px 32px;
       display: flex;
       gap: 10px;
       background: var(--surface);
       flex-shrink: 0;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
     }
 
+    .input-wrap { flex: 1; position: relative; }
     .input-bar input {
-      flex: 1;
-      background: var(--surface2);
-      border: 1px solid var(--border2);
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border2);
       border-radius: 8px;
-      padding: 11px 16px;
+      padding: 10px 16px;
       font-size: 13px;
       color: var(--text);
       font-family: var(--font);
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .input-bar input:focus { border-color: var(--accent); }
+    .input-bar input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,200,83,0.12);
+    }
     .input-bar input::placeholder { color: var(--muted); }
 
     .send-btn {
-      background: var(--accent);
-      color: #080808;
+      background: var(--text);
+      color: var(--bg);
       border: none;
       border-radius: 8px;
-      padding: 11px 20px;
+      padding: 10px 22px;
       font-size: 13px;
-      font-family: var(--font);
+      font-family: var(--mono);
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
       letter-spacing: 0.03em;
-      transition: opacity 0.15s;
+      transition: all 0.15s;
       white-space: nowrap;
     }
-    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .send-btn:not(:disabled):hover { opacity: 0.85; }
+    .send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .send-btn:not(:disabled):hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,150,36,0.3);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text);
+      color: var(--bg);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 8px 20px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 300;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 700px) {
       .sidebar { display: none; }
-      nav { padding: 12px 16px; }
+      nav { padding: 0 16px; }
       .chat-panel { padding: 16px; }
       .results-panel { padding: 12px 16px; }
-      .input-bar { padding: 12px 16px; }
+      .input-bar { padding: 10px 16px; }
     }
   </style>
 </head>
 <body>
 
   <nav>
-    <a href="index.html" class="nav-logo">← J.A</a>
-    <div class="nav-links">
-      <span class="status-dot" id="status-dot"></span>
-      <a href="index.html">About</a>
-      <a href="finder.html" class="active">Finder</a>
-      <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank">LinkedIn ↗</a>
+    <a href="index.html" class="nav-logo">J.A <span>→</span> Finder</a>
+    <div class="nav-right">
+      <div class="status-pill">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">ready</span>
+      </div>
+      <a href="index.html" class="nav-btn">About</a>
+      <a href="finder.html" class="nav-btn active">Finder</a>
+      <a href="https://www.linkedin.com/in/jannah-abdelhay-a25538291/" target="_blank" class="nav-btn">LinkedIn ↗</a>
     </div>
   </nav>
 
   <div class="layout">
+    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-label">Filters</div>
-        <div class="filter-chip active" id="f-remote" onclick="toggleFilter('remote','f-remote')">Remote only</div>
-        <div class="filter-chip active" id="f-free" onclick="toggleFilter('free','f-free')">Free to enter</div>
-        <div class="filter-chip" id="f-team" onclick="toggleFilter('team','f-team')">Team-friendly</div>
-        <div class="filter-chip" id="f-prize" onclick="toggleFilter('prize','f-prize')">Cash prize</div>
-        <div class="filter-chip" id="f-beginner" onclick="toggleFilter('beginner','f-beginner')">Beginner-friendly</div>
+        <div class="filter-chip active" id="f-remote" onclick="toggleFilter('remote','f-remote')"><div class="chip-dot"></div>Remote only</div>
+        <div class="filter-chip active" id="f-free" onclick="toggleFilter('free','f-free')"><div class="chip-dot"></div>Free to enter</div>
+        <div class="filter-chip" id="f-team" onclick="toggleFilter('team','f-team')"><div class="chip-dot"></div>Team-friendly</div>
+        <div class="filter-chip" id="f-prize" onclick="toggleFilter('prize','f-prize')"><div class="chip-dot"></div>Cash prize</div>
+        <div class="filter-chip" id="f-beginner" onclick="toggleFilter('beginner','f-beginner')"><div class="chip-dot"></div>Beginner-friendly</div>
       </div>
+
+      <div class="sidebar-divider"></div>
 
       <div class="sidebar-section">
         <div class="sidebar-label">Deadline window</div>
-        <div class="filter-chip active" id="dl-week" onclick="setDeadline('within 2 weeks','dl-week')">Within 2 weeks</div>
-        <div class="filter-chip" id="dl-month" onclick="setDeadline('within 1 month','dl-month')">Within 1 month</div>
-        <div class="filter-chip" id="dl-3" onclick="setDeadline('within 3 months','dl-3')">Within 3 months</div>
-        <div class="filter-chip" id="dl-any" onclick="setDeadline('any deadline','dl-any')">Any deadline</div>
+        <div class="filter-chip active" id="dl-week" onclick="setDeadline('within 2 weeks','dl-week')"><div class="chip-dot"></div>Within 2 weeks</div>
+        <div class="filter-chip" id="dl-month" onclick="setDeadline('within 1 month','dl-month')"><div class="chip-dot"></div>Within 1 month</div>
+        <div class="filter-chip" id="dl-3" onclick="setDeadline('within 3 months','dl-3')"><div class="chip-dot"></div>Within 3 months</div>
+        <div class="filter-chip" id="dl-any" onclick="setDeadline('any deadline','dl-any')"><div class="chip-dot"></div>Any deadline</div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="saved-section">
+        <div class="sidebar-label">Saved</div>
+        <div class="saved-count-badge" onclick="openDrawer()">
+          🔖 <span id="saved-count">0</span> bookmarked
+        </div>
       </div>
 
       <div class="legend">
         <div class="sidebar-label">Urgency</div>
-        <div class="legend-row"><div class="dot dot-r"></div>&lt;10 days left</div>
-        <div class="legend-row"><div class="dot dot-a"></div>10–30 days left</div>
-        <div class="legend-row"><div class="dot dot-g"></div>30+ days left</div>
+        <div class="legend-row"><div class="dot dot-r"></div>&lt;10 days</div>
+        <div class="legend-row"><div class="dot dot-a"></div>10–30 days</div>
+        <div class="legend-row"><div class="dot dot-g"></div>30+ days</div>
       </div>
     </div>
 
+    <!-- MAIN -->
     <div class="main">
       <div class="chat-panel" id="chat">
         <div class="empty-state" id="empty">
-          <div class="empty-icon">🔍</div>
-          <div class="empty-title">What are you looking for?</div>
-          <div class="empty-desc">Describe any opportunity — hackathons, grants, competitions, bounties — and I'll search the web and find real ones with deadlines and apply links.</div>
-          <div class="chips">
-            <div class="chip" onclick="prefill('Find me vibe coding hackathons online this month')">Vibe coding hackathons</div>
-            <div class="chip" onclick="prefill('AI competitions with prizes open now')">AI competitions</div>
-            <div class="chip" onclick="prefill('Cybersecurity CTF competitions upcoming')">Cybersecurity CTFs</div>
-            <div class="chip" onclick="prefill('Open source bounties for beginners')">Open source bounties</div>
-            <div class="chip" onclick="prefill('Math competitions for undergraduates')">Math competitions</div>
+          <div class="empty-icon-wrap">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-icon-ring"></div>
+          </div>
+          <div class="empty-title">Find your next <span>opportunity</span></div>
+          <div class="empty-desc">Describe any opportunity — hackathons, grants, competitions, bounties — and I'll search the web and return real ones with deadlines and apply links.</div>
+          <div class="suggestion-chips">
+            <div class="sugg-chip" onclick="prefill('Find me vibe coding hackathons online this month')">Vibe coding hackathons</div>
+            <div class="sugg-chip" onclick="prefill('AI competitions with cash prizes open now')">AI competitions</div>
+            <div class="sugg-chip" onclick="prefill('Cybersecurity CTF competitions upcoming')">Cybersecurity CTFs</div>
+            <div class="sugg-chip" onclick="prefill('Open source bounties for beginners')">Open source bounties</div>
+            <div class="sugg-chip" onclick="prefill('Math competitions for undergraduates 2025')">Math competitions</div>
+            <div class="sugg-chip" onclick="prefill('Design hackathons with cash prizes')">Design hackathons</div>
           </div>
         </div>
       </div>
 
       <div class="results-panel" id="results-panel" style="display:none;">
         <div class="results-header">
-          <div class="results-title">Results</div>
+          <div class="results-title">// results</div>
           <div class="results-count" id="results-count"></div>
         </div>
         <div id="results-list"></div>
       </div>
 
       <div class="input-bar">
-        <input
-          type="text"
-          id="user-input"
-          placeholder="e.g. Find me vibe coding competitions open now..."
-          onkeydown="if(event.key==='Enter' && !event.shiftKey) send()"
-        />
+        <div class="input-wrap">
+          <input
+            type="text"
+            id="user-input"
+            placeholder="e.g. Find me vibe coding competitions open now..."
+            onkeydown="if(event.key==='Enter' && !event.shiftKey) send()"
+          />
+        </div>
         <button class="send-btn" id="send-btn" onclick="send()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           Search
@@ -502,12 +723,30 @@
     </div>
   </div>
 
+  <!-- SAVED DRAWER -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="saved-drawer" id="saved-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">🔖 Saved Opportunities</div>
+      <div class="drawer-close" onclick="closeDrawer()">✕</div>
+    </div>
+    <div class="drawer-body" id="drawer-body">
+      <div class="drawer-empty">No saved opportunities yet.<br/>Bookmark results to see them here.</div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
   <script>
+    // ─── State ───────────────────────────────────────────────────────────────
     let filters = { remote: true, free: true, team: false, prize: false, beginner: false };
     let deadline = 'within 2 weeks';
     let history = [];
     let loading = false;
+    let savedItems = JSON.parse(localStorage.getItem('opp_saved') || '[]');
 
+    // ─── Filters ─────────────────────────────────────────────────────────────
     function toggleFilter(key, id) {
       filters[key] = !filters[key];
       document.getElementById(id).classList.toggle('active', filters[key]);
@@ -521,14 +760,95 @@
       document.getElementById(id).classList.add('active');
     }
 
+    // ─── Status ───────────────────────────────────────────────────────────────
     function setStatus(state) {
       const dot = document.getElementById('status-dot');
+      const txt = document.getElementById('status-text');
       dot.className = 'status-dot' + (state === 'loading' ? ' loading' : state === 'error' ? ' error' : '');
+      txt.textContent = state;
     }
 
+    // ─── Toast ────────────────────────────────────────────────────────────────
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // ─── Bookmarks ───────────────────────────────────────────────────────────
+    function updateSavedCount() {
+      document.getElementById('saved-count').textContent = savedItems.length;
+    }
+
+    function saveItem(item) {
+      const exists = savedItems.find(s => s.title === item.title);
+      if (exists) {
+        savedItems = savedItems.filter(s => s.title !== item.title);
+        showToast('Removed from saved');
+      } else {
+        savedItems.push(item);
+        showToast('✓ Saved!');
+      }
+      localStorage.setItem('opp_saved', JSON.stringify(savedItems));
+      updateSavedCount();
+      renderDrawer();
+      return !exists;
+    }
+
+    function isSaved(title) {
+      return savedItems.some(s => s.title === title);
+    }
+
+    function renderDrawer() {
+      const body = document.getElementById('drawer-body');
+      if (savedItems.length === 0) {
+        body.innerHTML = '<div class="drawer-empty">No saved opportunities yet.<br/>Bookmark results to see them here.</div>';
+        return;
+      }
+      body.innerHTML = '';
+      savedItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'saved-card';
+        div.innerHTML = `
+          <div class="saved-card-title">${item.title}</div>
+          <div class="saved-card-dl">${item.deadline || 'Deadline unknown'}</div>
+          <div class="saved-card-actions">
+            ${item.url ? `<a class="saved-open-btn" href="${item.url}" target="_blank" rel="noopener">Open ↗</a>` : ''}
+            <button class="saved-remove-btn" onclick="removeItem('${item.title.replace(/'/g,"\\'")}')">Remove</button>
+          </div>`;
+        body.appendChild(div);
+      });
+    }
+
+    function removeItem(title) {
+      savedItems = savedItems.filter(s => s.title !== title);
+      localStorage.setItem('opp_saved', JSON.stringify(savedItems));
+      updateSavedCount();
+      renderDrawer();
+      // update bookmark buttons
+      document.querySelectorAll('.bookmark-btn').forEach(btn => {
+        if (btn.dataset.title === title) {
+          btn.classList.remove('saved');
+          btn.textContent = '🔖';
+        }
+      });
+    }
+
+    function openDrawer() {
+      document.getElementById('saved-drawer').classList.add('open');
+      document.getElementById('drawer-overlay').classList.add('open');
+      renderDrawer();
+    }
+    function closeDrawer() {
+      document.getElementById('saved-drawer').classList.remove('open');
+      document.getElementById('drawer-overlay').classList.remove('open');
+    }
+
+    // ─── Chat helpers ─────────────────────────────────────────────────────────
     function prefill(text) {
       document.getElementById('user-input').value = text;
-      send();
+      document.getElementById('user-input').focus();
     }
 
     function addMsg(role, text) {
@@ -540,7 +860,6 @@
       div.textContent = text;
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
-      return div;
     }
 
     function showThinking() {
@@ -558,6 +877,7 @@
       if (t) t.remove();
     }
 
+    // ─── Urgency ──────────────────────────────────────────────────────────────
     function urgClass(daysLeft) {
       if (!daysLeft) return 'green';
       const n = parseInt(daysLeft);
@@ -567,6 +887,7 @@
       return 'green';
     }
 
+    // ─── Render results ───────────────────────────────────────────────────────
     function renderResults(results) {
       const panel = document.getElementById('results-panel');
       const list = document.getElementById('results-list');
@@ -579,30 +900,47 @@
         const urg = urgClass(r.daysLeft);
         const dotColor = urg === 'red' ? 'var(--red)' : urg === 'amber' ? 'var(--amber)' : 'var(--green)';
         const tags = (r.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
-        const applyBtn = r.url ? `<a class="apply-link" href="${r.url}" target="_blank" rel="noopener">Apply ↗</a>` : '';
+        const applyBtn = r.url ? `<a class="apply-link" href="${r.url}" target="_blank" rel="noopener noreferrer">Apply ↗</a>` : '';
         const badge = r.deadline ? `<span class="deadline-badge badge-${urg}">${r.deadline}</span>` : '';
+        const bookmarked = isSaved(r.title);
 
         const card = document.createElement('div');
         card.className = `result-card ${urg}`;
-        card.style.animationDelay = (i * 0.06) + 's';
+        card.style.animationDelay = (i * 0.07) + 's';
         card.innerHTML = `
           <div class="card-urgency-dot" style="background:${dotColor}"></div>
           <div class="card-body">
             <div class="card-title">${r.title}</div>
             <div class="card-desc">${r.description}</div>
             <div class="card-footer">${badge}${tags}${applyBtn}</div>
-          </div>`;
+          </div>
+          <button class="bookmark-btn ${bookmarked ? 'saved' : ''}" data-title="${r.title.replace(/"/g,'&quot;')}" onclick="handleBookmark(this, ${i})" title="Save opportunity">
+            ${bookmarked ? '✅' : '🔖'}
+          </button>`;
         list.appendChild(card);
       });
     }
 
+    // store last results for bookmarking
+    let lastResults = [];
+
+    function handleBookmark(btn, idx) {
+      const item = lastResults[idx];
+      if (!item) return;
+      const nowSaved = saveItem(item);
+      btn.classList.toggle('saved', nowSaved);
+      btn.textContent = nowSaved ? '✅' : '🔖';
+    }
+
+    // ─── Thinking cycle ───────────────────────────────────────────────────────
     const thinkingCycle = [
       'Searching the web...',
-      'Scanning opportunities...',
-      'Verifying deadlines...',
+      'Finding opportunities...',
+      'Checking deadlines...',
       'Sorting by urgency...'
     ];
 
+    // ─── Send ─────────────────────────────────────────────────────────────────
     async function send() {
       if (loading) return;
       const input = document.getElementById('user-input');
@@ -624,14 +962,7 @@
         tIdx = (tIdx + 1) % thinkingCycle.length;
         const el = document.getElementById('thinking-text');
         if (el) el.textContent = thinkingCycle[tIdx];
-      }, 1300);
-
-      const activeFilters = Object.entries(filters).filter(([,v])=>v).map(([k])=>k).join(', ') || 'none';
-      const systemPrompt = `You are an AI opportunity finder agent. Find real opportunities online.
-Active filters: ${activeFilters}. Deadline window: ${deadline}.
-Search the web and return ONLY valid JSON (no markdown, no extra text):
-{"message":"brief friendly note","results":[{"title":"...","description":"1-2 sentences, prizes, who it's for","deadline":"Last date to apply: [date] · [X] days left","daysLeft":"[number] days","url":"https://real-url.com","tags":["tag1","tag2"]}]}
-Rules: real URLs only, sort by soonest deadline first, max 6 results, daysLeft must be a number string like "5 days".`;
+      }, 1200);
 
       try {
         const res = await fetch('/api/search', {
@@ -640,71 +971,60 @@ Rules: real URLs only, sort by soonest deadline first, max 6 results, daysLeft m
           body: JSON.stringify({ messages: history, filters, deadline })
         });
 
-        if (!res.ok) throw new Error('backend_unavailable');
-
+        if (!res.ok) throw new Error('backend_error');
         const data = await res.json();
+
         clearInterval(tInterval);
         removeThinking();
-        handleResponse(data, history);
+        handleResponse(data);
 
       } catch(err) {
-        // Fallback: call Anthropic directly (works when API key is embedded for local dev)
-        try {
-          const res2 = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'anthropic-version': '2023-06-01',
-              'anthropic-beta': 'web-search-2025-03-05',
-            },
-            body: JSON.stringify({
-              model: 'claude-sonnet-4-20250514',
-              max_tokens: 1000,
-              system: systemPrompt,
-              tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-              messages: history
-            })
-          });
-          const data2 = await res2.json();
-          clearInterval(tInterval);
-          removeThinking();
-          handleResponse(data2, history);
-        } catch(err2) {
-          clearInterval(tInterval);
-          removeThinking();
-          addMsg('assistant', 'Could not reach the search API. On Vercel, make sure ANTHROPIC_API_KEY is set in your environment variables and redeploy.');
-          setStatus('error');
-        }
+        clearInterval(tInterval);
+        removeThinking();
+        addMsg('assistant', '⚠ Could not reach the API. Make sure ANTHROPIC_API_KEY (or GROQ_API_KEY) is set in your Vercel environment variables and redeploy.');
+        setStatus('error');
       }
 
       loading = false;
       document.getElementById('send-btn').disabled = false;
     }
 
-    function handleResponse(data, history) {
+    // ─── Handle response ──────────────────────────────────────────────────────
+    function handleResponse(data) {
       if (data.error) {
         addMsg('assistant', 'API error: ' + (data.error.message || JSON.stringify(data.error)));
         setStatus('error');
         return;
       }
-      const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+
+      const textBlocks = (data.content || [])
+        .filter(b => b.type === 'text')
+        .map(b => b.text)
+        .join('');
+
       let parsed = null;
       try {
-        const match = textBlocks.match(/\{[\s\S]*\}/);
+        // strip possible markdown code fences
+        const clean = textBlocks.replace(/```json|```/g, '').trim();
+        const match = clean.match(/\{[\s\S]*\}/);
         if (match) parsed = JSON.parse(match[0]);
       } catch(e) {}
 
       if (parsed && Array.isArray(parsed.results)) {
         addMsg('assistant', parsed.message || 'Here\'s what I found:');
+        lastResults = parsed.results;
         if (parsed.results.length > 0) renderResults(parsed.results);
-        else addMsg('assistant', 'No results matched. Try broadening the deadline window or removing filters.');
+        else addMsg('assistant', 'No results matched your filters. Try broadening the deadline window or removing a filter.');
         history.push({ role: 'assistant', content: textBlocks });
       } else {
-        addMsg('assistant', textBlocks || 'Could not parse results. Try rephrasing.');
+        addMsg('assistant', textBlocks || 'Could not parse results. Try rephrasing your search.');
         history.push({ role: 'assistant', content: textBlocks });
       }
       setStatus('ready');
     }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    updateSavedCount();
   </script>
 </body>
 </html>
